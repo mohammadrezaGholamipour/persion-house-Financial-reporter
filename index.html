@@ -1,0 +1,243 @@
+<!doctype html>
+<html lang="fa" dir="rtl"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>گزارش مغایرت‌گیری مالیاتی</title>
+<link rel="stylesheet" href="/css/font.css">
+<style>
+:root{--bg:#f3f5fc;--card:rgba(255,255,255,.86);--solid:#fff;--tx:#101828;--mut:#667085;--bd:#e3e8f3;--ac:#5b5bf0;--ac2:#a855f7;--neg:#ef4444;--pos:#10b981;--sh:0 1px 2px rgba(16,24,40,.04),0 12px 32px -16px rgba(16,24,40,.18);--ff:KalamehWeb,Vazirmatn,"Segoe UI",Tahoma,sans-serif}
+[data-theme=dark]{--bg:#090c13;--card:rgba(22,27,40,.82);--solid:#161b28;--tx:#eef1f8;--mut:#8b96ad;--bd:#252d40;--ac:#8b8bff;--ac2:#c084fc;--neg:#ff7b80;--pos:#34d399;--sh:0 12px 32px -16px #000}
+*{box-sizing:border-box}
+body{margin:0;color:var(--tx);font:400 14px/1.7 var(--ff);min-height:100vh;background:radial-gradient(900px 420px at 85% -10%,color-mix(in srgb,var(--ac) 22%,transparent),transparent),radial-gradient(700px 380px at 5% 0,color-mix(in srgb,var(--ac2) 16%,transparent),transparent),var(--bg);background-attachment:fixed}
+.top{position:sticky;top:0;z-index:20;display:flex;align-items:center;gap:12px;padding:12px 28px;backdrop-filter:blur(14px);background:color-mix(in srgb,var(--bg) 70%,transparent);border-bottom:1px solid var(--bd)}
+.logo{width:42px;height:42px;border-radius:13px;background:linear-gradient(135deg,var(--ac),var(--ac2));display:grid;place-items:center;color:#fff;box-shadow:0 8px 20px -6px var(--ac)}
+h1{font-size:18px;margin:0;font-weight:900}.sub{color:var(--mut);font-size:12px}
+.sp{margin-inline-start:auto}
+svg.i{width:18px;height:18px;fill:none;stroke:currentColor;stroke-width:2;stroke-linecap:round;stroke-linejoin:round;flex:none}
+.btn{font:inherit;display:inline-flex;align-items:center;gap:6px;color:var(--tx);background:var(--solid);border:1px solid var(--bd);border-radius:11px;padding:7px 13px;cursor:pointer;transition:.18s}
+.btn:hover{border-color:var(--ac);transform:translateY(-1px)}.btn.p{background:linear-gradient(135deg,var(--ac),var(--ac2));color:#fff;border:0;box-shadow:0 8px 18px -8px var(--ac)}.btn:disabled{opacity:.4;pointer-events:none}
+.seg{display:flex;background:var(--solid);border:1px solid var(--bd);border-radius:11px;padding:3px}
+.seg button{border:0;background:none;color:var(--mut);font:inherit;padding:4px 12px;border-radius:8px;cursor:pointer;transition:.2s}.seg button.on{background:linear-gradient(135deg,var(--ac),var(--ac2));color:#fff}
+main{padding:22px 28px 40px;max-width:1560px;margin:auto}
+.grid{display:grid;gap:16px;margin-bottom:16px}.kp{grid-template-columns:repeat(auto-fit,minmax(250px,1fr))}.c3{grid-template-columns:repeat(auto-fit,minmax(340px,1fr))}.c2{grid-template-columns:2fr 1fr}
+@media(max-width:900px){.c2{grid-template-columns:1fr}main,.top{padding-inline:14px}}
+.card{background:var(--card);border:1px solid var(--bd);border-radius:20px;box-shadow:var(--sh);padding:18px 20px;position:relative;backdrop-filter:blur(8px);animation:up .6s cubic-bezier(.2,.7,.2,1) both;animation-delay:calc(var(--i,0)*60ms);min-width:0}
+@keyframes up{from{opacity:0;transform:translateY(16px)}}
+.k{transition:.25s;overflow:hidden}.k:hover{transform:translateY(-3px);border-color:var(--c)}
+.k:after{content:"";position:absolute;inset:auto -20% -60% auto;width:150px;height:150px;border-radius:50%;background:var(--c);opacity:.08;filter:blur(6px)}
+.kh{display:flex;align-items:center;gap:10px;margin-bottom:8px;color:var(--mut);font-size:13px}
+.ic{width:34px;height:34px;border-radius:11px;display:grid;place-items:center;color:var(--c);background:color-mix(in srgb,var(--c) 14%,transparent)}
+.kv{display:block;overflow:hidden;white-space:nowrap;direction:ltr;text-align:right;font-size:26px;font-weight:900;line-height:1.3;letter-spacing:-.4px}
+.ku{color:var(--mut);font-size:11.5px;margin-top:2px}
+.card h3{margin:0 0 4px;font-size:15px;font-weight:700}.card .hint{color:var(--mut);font-size:12px;margin-bottom:8px}
+.ch{height:300px}.ch.s{height:260px}
+.lg{display:flex;flex-direction:column;gap:6px;margin-top:6px}
+.lg button{display:flex;align-items:center;gap:8px;border:0;background:none;color:var(--tx);font:inherit;font-size:12.5px;padding:4px 6px;border-radius:8px;cursor:pointer;text-align:right}
+.lg button:hover{background:color-mix(in srgb,var(--c) 10%,transparent)}.lg i{width:10px;height:10px;border-radius:4px;background:var(--c);flex:none}.lg b{margin-inline-start:auto;direction:ltr}
+.tabs{display:inline-flex;gap:4px;background:color-mix(in srgb,var(--ac) 8%,var(--bg));padding:4px;border-radius:14px;margin-bottom:14px;flex-wrap:wrap}
+.tabs button{border:0;background:none;color:var(--mut);font:inherit;padding:8px 18px;border-radius:11px;cursor:pointer;transition:.2s}
+.tabs button.on{background:var(--solid);color:var(--ac);box-shadow:var(--sh);font-weight:700}
+.tool{display:flex;gap:10px;flex-wrap:wrap;align-items:center;margin-bottom:10px}
+.inp{display:flex;align-items:center;gap:8px;background:var(--solid);border:1px solid var(--bd);border-radius:12px;padding:0 12px;transition:.2s;color:var(--mut)}
+.inp:focus-within{border-color:var(--ac);box-shadow:0 0 0 4px color-mix(in srgb,var(--ac) 16%,transparent)}
+.inp input,.inp select{font:inherit;color:var(--tx);background:none;border:0;outline:0;padding:9px 0;min-width:0}.inp select{padding:9px 4px;cursor:pointer}.inp.w{flex:1;min-width:230px}
+.inp input[type=number]{width:100px;direction:ltr;text-align:center}.inp button{border:0;background:none;color:var(--mut);cursor:pointer;font:inherit;font-size:18px;padding:0 4px}
+.chips{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:12px}
+.fc{border:1px solid var(--bd);background:var(--solid);color:var(--tx);font:inherit;font-size:12.5px;padding:5px 13px;border-radius:99px;cursor:pointer;transition:.18s;display:inline-flex;gap:6px;align-items:center}
+.fc:hover{border-color:var(--c,var(--ac))}.fc.on{background:var(--c,var(--ac));border-color:var(--c,var(--ac));color:#fff}.fc i{font-style:normal;opacity:.75;direction:ltr}
+.wrap{overflow:auto;max-height:66vh;border:1px solid var(--bd);border-radius:16px;background:var(--solid);transition:opacity .2s}.wrap.ld{opacity:.45}
+table{border-collapse:separate;border-spacing:0;width:100%;min-width:1000px}
+th{position:sticky;top:0;z-index:1;background:color-mix(in srgb,var(--ac) 7%,var(--solid));color:var(--mut);font-weight:700;font-size:12px;cursor:pointer;user-select:none;transition:.15s}th:hover{color:var(--ac)}
+th,td{padding:11px 14px;text-align:right;white-space:nowrap;max-width:280px;overflow:hidden;text-overflow:ellipsis;border-bottom:1px solid var(--bd)}
+tbody tr{cursor:pointer;transition:background .12s}tbody tr:nth-child(even) td{background:color-mix(in srgb,var(--ac) 2.5%,transparent)}tbody tr:hover td{background:color-mix(in srgb,var(--ac) 9%,transparent)}
+td.n{direction:ltr;text-align:left;font-variant-numeric:tabular-nums}.neg{color:var(--neg);font-weight:700}.pos{color:var(--pos);font-weight:700}
+.chip{display:inline-block;padding:2px 10px;border-radius:99px;font-size:11.5px;margin-inline-end:4px;background:color-mix(in srgb,var(--c) 14%,transparent);color:var(--c);font-weight:700}
+.foot{display:flex;align-items:center;gap:10px;margin-top:12px;color:var(--mut);flex-wrap:wrap}
+.empty{padding:56px;text-align:center;color:var(--mut)}
+dialog{border:0;border-radius:22px;padding:0;width:min(880px,94vw);max-height:88vh;background:var(--solid);color:var(--tx);box-shadow:0 30px 80px -16px rgba(0,0,0,.5);animation:pop .3s cubic-bezier(.2,.8,.2,1)}
+@keyframes pop{from{opacity:0;transform:scale(.94) translateY(10px)}}
+dialog::backdrop{background:rgba(8,11,20,.6);backdrop-filter:blur(4px)}
+.gh{display:flex;align-items:center;padding:16px 24px;border-bottom:1px solid var(--bd);position:sticky;top:0;background:var(--solid);z-index:1}.gh b{font-size:16px}
+.gc{padding:4px 24px 24px;overflow:auto;max-height:calc(88vh - 62px)}.gc h4{margin:22px 0 6px;font-size:14px;color:var(--ac)}.gc p,.gc li{margin:4px 0}.gc ul{padding-inline-start:20px}
+.gc .box{background:var(--bg);border:1px solid var(--bd);border-radius:14px;padding:10px 14px;margin:8px 0}.gc .live{border-inline-start:3px solid var(--ac)}
+.gc code{background:color-mix(in srgb,var(--ac) 10%,transparent);padding:1px 8px;border-radius:7px;font-size:13px}
+.ov{position:fixed;inset:0;background:rgba(8,11,20,.5);backdrop-filter:blur(3px);opacity:0;pointer-events:none;transition:.25s;z-index:30}.ov.on{opacity:1;pointer-events:auto}
+.dr{position:fixed;top:0;bottom:0;right:0;width:min(460px,94vw);background:var(--solid);z-index:31;transform:translateX(105%);transition:transform .35s cubic-bezier(.2,.8,.2,1);box-shadow:-20px 0 60px -20px rgba(0,0,0,.4);display:flex;flex-direction:column}.dr.on{transform:none}
+.dr .gh{position:static}.drb{padding:8px 22px 24px;overflow:auto}.row2{display:flex;gap:12px;justify-content:space-between;padding:10px 0;border-bottom:1px dashed var(--bd)}.row2 span{color:var(--mut);flex:none}.row2 b{text-align:left;direction:ltr;font-weight:700;word-break:break-all}
+.sk{height:300px;border-radius:14px;background:linear-gradient(90deg,transparent,color-mix(in srgb,var(--ac) 8%,transparent),transparent) var(--bg);background-size:200% 100%;animation:sh 1.2s infinite}@keyframes sh{to{background-position:-200% 0}}
+</style></head><body>
+<div class="top"><div class="logo"><svg class="i" viewBox="0 0 24 24"><path d="M4 7h16M4 12h10M4 17h6"/><circle cx="18" cy="16" r="3"/></svg></div>
+<div><h1>مغایرت‌گیری ماژول و سامانه مودیان</h1><div class="sub" id="gen">&nbsp;</div></div><span class="sp"></span>
+<button class="btn p" id="gdb"><svg class="i" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><path d="M9.1 9a3 3 0 015.8 1c0 2-3 3-3 3M12 17h.01"/></svg>راهنمای محاسبات</button>
+<div class="seg" id="seg" title="واحد نمایش مبالغ"><button data-u="1" class="on">ریال</button><button data-u="10">تومان</button><button data-u="10000000000">میلیارد تومان</button></div>
+<button class="btn" id="thm" title="تغییر تم"><svg class="i" viewBox="0 0 24 24"><path d="M21 12.8A9 9 0 1111.2 3a7 7 0 009.8 9.8z"/></svg></button></div>
+<dialog id="gd"><div class="gh"><b>نحوه محاسبه و راهنمای خواندن گزارش</b><span class="sp"></span><button class="btn" onclick="$('#gd').close()">بستن</button></div><div class="gc" id="gcb"></div></dialog>
+<div class="ov" id="ov"></div><aside class="dr" id="dr"><div class="gh"><b id="drt">جزئیات</b><span class="sp"></span><button class="btn" id="drx">بستن</button></div><div class="drb" id="drb"></div></aside>
+<main>
+<div class="grid kp" id="kpi"></div>
+<div class="grid c2"><div class="card" style="--i:7"><h3>فروش خالص ماهانه</h3><div class="hint">مقایسه ماژول و مودیان به تفکیک ماه و اختلاف خالص</div><div class="ch" id="c_m"><div class="sk"></div></div></div>
+<div class="card" style="--i:8"><h3>نوع مغایرت‌ها</h3><div class="hint">با کلیک روی هر مورد، جدول فیلتر می‌شود</div><div class="ch s" id="c_d"></div><div class="lg" id="lg"></div></div></div>
+<div class="grid c3"><div class="card" style="--i:9"><h3>نرخ تطابق کامل</h3><div class="hint">سهم شناسه‌هایی که دقیقاً یکسان‌اند</div><div class="ch s" id="c_g"></div></div>
+<div class="card" style="--i:10"><h3>توزیع اندازه اختلاف</h3><div class="hint">تعداد مغایرت‌ها بر حسب بزرگی اختلاف (تومان)</div><div class="ch s" id="c_b"></div></div>
+<div class="card" style="--i:11"><h3>بیشترین اختلاف به تفکیک طرف حساب</h3><div class="hint">۱۰ طرف حساب اول بر اساس مجموع اختلاف خالص</div><div class="ch s" id="c_t"></div></div></div>
+<div class="card" style="--i:12">
+<div class="tabs" id="tabs"></div>
+<div class="tool"><label class="inp w"><svg class="i" viewBox="0 0 24 24"><circle cx="11" cy="11" r="7"/><path d="M21 21l-4.3-4.3"/></svg><input id="q" placeholder="جستجو: شناسه، نام، کد ملی، کد اشتراک …  ( / )"></label>
+<label class="inp" id="thl" title="اختلاف‌های کمتر یا مساوی این مقدار نمایش داده نمی‌شود"><span style="font-size:12px">آستانه (تومان)</span><button id="thm1">−</button><input id="th" type="number" value="10000" step="1000" min="0"><button id="thp">+</button></label>
+<label class="inp"><span style="font-size:12px">تعداد در صفحه</span><select id="ps"><option>50</option><option selected>100</option><option>200</option><option>500</option></select></label>
+<button class="btn p" id="csv"><svg class="i" viewBox="0 0 24 24"><path d="M12 3v12m0 0l-4-4m4 4l4-4M4 17v2a2 2 0 002 2h12a2 2 0 002-2v-2"/></svg>دریافت CSV</button></div>
+<div class="chips" id="fc"></div>
+<div class="wrap" id="wrap"><table><thead id="th_"></thead><tbody id="tb"></tbody></table><div id="em" class="empty" hidden>موردی یافت نشد</div></div>
+<div class="foot"><span id="info"></span><span class="sp"></span><button class="btn" id="pv">قبلی</button><span id="pg"></span><button class="btn" id="nx">بعدی</button></div></div>
+</main>
+<script>
+const $=s=>document.querySelector(s),$$=s=>[...document.querySelectorAll(s)];
+const E=s=>String(s??'').replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+const FF='KalamehWeb,Vazirmatn,Tahoma,sans-serif',UN={1:'ریال',10:'تومان',1e10:'میلیارد تومان'};
+let U=1,CH={},INS=null;
+const dt=(()=>{try{return localStorage.getItem('th')}catch(e){}})()||(matchMedia('(prefers-color-scheme:dark)').matches?'dark':'light');document.documentElement.dataset.theme=dt;
+/* ---------- فرمت و انیمیشن اعداد ---------- */
+const fmtM=(v,u=U)=>(v/u).toLocaleString('en',{maximumFractionDigits:u>1e5?2:0});
+const FMT={m:v=>fmtM(v),t:v=>fmtM(v,Math.min(U,10)),c:v=>Math.round(v).toLocaleString('en'),s:v=>(v>0?'+':v<0?'−':'')+fmtM(Math.abs(v),Math.min(U,10)),S:v=>(v>0?'+':v<0?'−':'')+fmtM(Math.abs(v)),p:v=>v.toFixed(1)};
+const V=(v,k='m',cls='')=>`<b class="cnt ${cls}" data-v="${+v||0}" data-k="${k}">${FMT[k](+v||0)}</b>`;
+function fit(e){e.style.fontSize='';let f=parseFloat(getComputedStyle(e).fontSize);while(e.scrollWidth>e.clientWidth&&f>11)e.style.fontSize=(--f)+'px'}
+function anim(root=document,dur=900){
+ const L=[...root.querySelectorAll('.cnt')].map(e=>({e,to:+e.dataset.v,from:e._cur||0,k:e.dataset.k}));
+ L.forEach(x=>{if(x.e.classList.contains('fit')){x.e.textContent=FMT[x.k](x.to);fit(x.e)}});
+ const t0=performance.now();(function f(t){const p=Math.min(1,(t-t0)/dur),q=1-Math.pow(1-p,4);
+  L.forEach(x=>{const v=p<1?x.from+(x.to-x.from)*q:x.to;x.e._cur=v;x.e.textContent=FMT[x.k](v)});if(p<1)requestAnimationFrame(f)})(t0)}
+/* ---------- بارگذاری چارت: CDN اول، CDN دوم، نسخه محلی ---------- */
+const loadScript=(src,ms)=>new Promise((ok,no)=>{const s=document.createElement('script');s.src=src;const t=setTimeout(()=>{s.remove();no()},ms);s.onload=()=>{clearTimeout(t);ok()};s.onerror=()=>{clearTimeout(t);no()};document.head.appendChild(s)});
+const ECH=loadScript('https://cdn.jsdelivr.net/npm/echarts@5.5.1/dist/echarts.min.js',3500).catch(()=>loadScript('https://cdnjs.cloudflare.com/ajax/libs/echarts/5.5.1/echarts.min.js',3500)).catch(()=>loadScript('/assets/vendor/echarts.min.js',10000)).then(()=>true,()=>false);
+const COL={'عدم ثبت فروش در سامانه مودیان':'#ef4444','عدم ثبت فروش در نرم‌افزار':'#f59e0b','مغایرت مبلغ فروش':'#8b5cf6','برگشت فقط در نرم‌افزار':'#06b6d4','برگشت فقط در سامانه مودیان':'#3b82f6','مغایرت مبلغ برگشت':'#ec4899','ابطال در هر دو سیستم':'#10b981'};
+const chip=(t,c)=>`<span class="chip" style="--c:${c||COL[t]||'#ef4444'}">${E(t)}</span>`;
+const ico=d=>`<svg class="i" viewBox="0 0 24 24"><path d="${d}"/></svg>`;
+const KP=[['c_net','فروش خالص نرم‌افزار','#5b5bf0','m','M3 4h18v12H3zM8 20h8M12 16v4'],['t_net','فروش خالص مودیان','#f59e0b','m','M3 21h18M5 21V10l7-5 7 5v11M9 21v-6h6v6'],['diff','اختلاف خالص (ماژول − مودیان)','#ef4444','S','M8 3L4 7l4 4M4 7h16M16 21l4-4-4-4M20 17H4'],
+['visible','مغایرت قابل نمایش','#8b5cf6','c','M12 9v4M12 17h.01M10.3 3.9L1.8 18a2 2 0 001.7 3h17a2 2 0 001.7-3L13.7 3.9a2 2 0 00-3.4 0z'],['hidden','پنهان (زیر آستانه)','#64748b','c','M3 3l18 18M10.6 10.6a2 2 0 002.8 2.8M9.9 5.1A10 10 0 0112 5c7 0 10 7 10 7a17 17 0 01-3.2 4.2M6.6 6.6A17 17 0 002 12s3 7 10 7a10 10 0 004.1-.9'],['exact','کاملاً مطابق','#10b981','c','M20 6L9 17l-5-5'],['canc','ابطال کنارگذاشته‌شده','#06b6d4','c','M12 22a10 10 0 100-20 10 10 0 000 20zM4.9 4.9l14.2 14.2']];
+$('#kpi').innerHTML=KP.map((k,i)=>`<div class="card k" style="--c:${k[2]};--i:${i}"><div class="kh"><span class="ic">${ico(k[4])}</span>${k[1]}</div><span class="kv fit cnt" id="k_${k[0]}" data-v="0" data-k="${k[3]}">…</span><div class="ku">${k[3]==='c'?'مورد':''}</div></div>`).join('');
+const COLS={
+mis:[['key','شناسه مالیاتی'],['name','طرف حساب'],['nid','کد ملی/شناسه ملی'],['ptype','نوع شخص'],['sub','کد اشتراک'],['reasons','نوع مغایرت',2],['d_net','اختلاف خالص',3],['m_net','خالص ماژول',1],['t_net','خالص مودیان',1],['m_sale','فروش ماژول',1],['t_sale','فروش مودیان',1],['m_ret','برگشت ماژول',1],['t_ret','برگشت مودیان',1],['eco','کد اقتصادی'],['notes','توضیح'],['m_rows','ردیف ماژول'],['t_rows','ردیف مودیان']],
+can:[['key','شناسه فاکتور ابطال‌شده'],['status','وضعیت',4],['m_sale','فروش ماژول (کنارگذاشته)',1],['t_sale','فروش مودیان (کنارگذاشته)',1],['m_rows','ردیف ماژول'],['t_rows','ردیف ابطال مودیان']],
+iss:[['src','منبع'],['row','ردیف اکسل'],['key','شناسه'],['ref','شناسه مرجع'],['type','نوع'],['amount','مبلغ',1],['issue','موضوع',5],['detail','توضیح']],
+map:[['f','مفهوم'],['c','ستون ماژول'],['t','ستون مودیان']]};
+const HELP={key:'شناسه مالیاتی فاکتور فروش اصلی (کلید مقایسه)',reasons:'نوع اختلاف بین ماژول و مودیان',d_net:'خالص ماژول منهای خالص مودیان؛ منفی یعنی مودیان بیشتر است',m_net:'فروش منهای برگشت‌ها در ماژول',t_net:'فروش منهای برگشت‌ها در مودیان',m_sale:'مبلغ کل فاکتور فروش در ماژول',t_sale:'مبلغ کل فاکتور فروش در مودیان',m_ret:'جمع برگشت‌های متصل به این فاکتور در ماژول',t_ret:'جمع برگشت‌های متصل به این فاکتور در مودیان',m_rows:'شماره ردیف در فایل اکسل ماژول',t_rows:'شماره ردیف در فایل اکسل مودیان',notes:'نکته‌های خودکار مثل برگشت دوره قبل',status:'وضعیت ابطال در دو سیستم',issue:'نوع مورد کنترلی',nid:'کد ملی یا شناسه ملی طرف حساب (از ماژول)',sub:'کد اشتراک طرف حساب (از ماژول)'};
+const NAMES={mis:'مغایرت‌ها',can:'ابطال و اختلاف وضعیت',iss:'کنترل داده و وضعیت‌ها',map:'نگاشت ستون‌ها'};
+let S={t:'mis',page:0,sort:'',dir:1,size:100,f:'',total:0,sum:null,rows:[]};
+const qs=()=>new URLSearchParams({t:S.t,q:$('#q').value,reason:S.f,th:$('#th').value||0,sort:S.sort,dir:S.dir,page:S.page,size:S.size});
+const J=u=>fetch(u).then(r=>r.json());
+const cell=(c,r)=>{const v=r[c[0]],m=c[2];
+ if(m===1)return`<td class="n">${V(v||0,'t')}</td>`;
+ if(m===3)return`<td class="n ${v?(v>0?'pos':'neg'):''}">${V(v||0,'s')}</td>`;
+ if(m===2)return`<td>${String(v).split(' | ').filter(Boolean).map(x=>chip(x)).join('')}</td>`;
+ if(m===4)return`<td>${chip(v,v.startsWith('اختلاف')?'#f59e0b':v.startsWith('ابطال در هر')?'#10b981':'#64748b')}</td>`;
+ if(m===5)return`<td>${chip(v,'#5b5bf0')}</td>`;
+ return`<td title="${E(v)}">${E(v)}</td>`};
+/* ---------- چارت‌ها ---------- */
+const tc=()=>{const s=getComputedStyle(document.documentElement);return{tx:s.getPropertyValue('--tx').trim(),mut:s.getPropertyValue('--mut').trim(),bd:s.getPropertyValue('--bd').trim(),card:s.getPropertyValue('--solid').trim()}};
+const grad=(a,b)=>new echarts.graphic.LinearGradient(0,0,0,1,[{offset:0,color:a},{offset:1,color:b}]);
+const short=v=>{const a=Math.abs(v);return a>=1e12?(v/1e12).toFixed(1)+'T':a>=1e9?(v/1e9).toFixed(1)+'B':a>=1e6?(v/1e6).toFixed(1)+'M':a>=1e3?(v/1e3).toFixed(0)+'K':v};
+function put(id,opt){const el=$('#'+id);el.innerHTML==='' || el.querySelector('.sk') && (el.innerHTML='');const c=CH[id]||(CH[id]=echarts.init(el));c.setOption({animationDuration:1100,animationEasing:'cubicOut',textStyle:{fontFamily:FF,color:tc().mut},...opt},true)}
+async function charts(){
+ if(!await ECH){$$('.ch').forEach(e=>e.innerHTML='<div class="empty">بارگذاری کتابخانه نمودار ممکن نشد (CDN و نسخه محلی)</div>');return}
+ const d=S.sum,t=tc(),M=d.monthly,ax={axisLine:{show:false},axisTick:{show:false},axisLabel:{color:t.mut,fontFamily:FF}},sl={splitLine:{lineStyle:{color:t.bd,type:'dashed'}}};
+ const tip={backgroundColor:t.card,borderColor:t.bd,textStyle:{color:t.tx,fontFamily:FF},extraCssText:'border-radius:12px;box-shadow:0 12px 30px -10px rgba(0,0,0,.35)'};
+ put('c_m',{tooltip:{trigger:'axis',...tip,valueFormatter:v=>(+v).toLocaleString('en',{maximumFractionDigits:2})+' '+UN[U]},legend:{top:0,textStyle:{color:t.mut,fontFamily:FF}},grid:{left:6,right:6,top:38,bottom:4,containLabel:true},
+  xAxis:{type:'category',data:M.map(x=>x.m),...ax},yAxis:{type:'value',...ax,...sl,axisLabel:{color:t.mut,formatter:v=>short(v)}},
+  series:[{name:'نرم‌افزار',type:'bar',barMaxWidth:26,itemStyle:{borderRadius:[8,8,0,0],color:grad('#a78bfa','#5b5bf0')},data:M.map(x=>x.c/U)},
+   {name:'مودیان',type:'bar',barMaxWidth:26,itemStyle:{borderRadius:[8,8,0,0],color:grad('#fcd34d','#f59e0b')},data:M.map(x=>x.t/U)},
+   {name:'اختلاف',type:'line',smooth:true,symbolSize:7,lineStyle:{width:3,color:'#ef4444'},itemStyle:{color:'#ef4444'},areaStyle:{color:grad('rgba(239,68,68,.22)','rgba(239,68,68,0)')},data:M.map(x=>(x.c-x.t)/U)}]});
+ const R=Object.entries(d.reasons).filter(x=>x[1]>0),tot=R.reduce((a,x)=>a+x[1],0);
+ put('c_d',{tooltip:{trigger:'item',...tip},series:[{type:'pie',radius:['60%','84%'],itemStyle:{borderRadius:9,borderColor:t.card,borderWidth:3},label:{show:false},emphasis:{scaleSize:8},data:R.map(([k,v])=>({name:k,value:v,itemStyle:{color:COL[k]}}))}],
+  graphic:[{type:'text',left:'center',top:'41%',style:{text:tot.toLocaleString('en'),fill:t.tx,font:'900 26px '+FF}},{type:'text',left:'center',top:'56%',style:{text:'مغایرت',fill:t.mut,font:'12px '+FF}}]});
+ const rate=d.kpi.n_keys?d.kpi.n_exact/d.kpi.n_keys*100:0;
+ put('c_g',{series:[{type:'gauge',startAngle:210,endAngle:-30,min:0,max:100,radius:'92%',progress:{show:true,width:18,roundCap:true,itemStyle:{color:new echarts.graphic.LinearGradient(0,0,1,0,[{offset:0,color:'#f59e0b'},{offset:1,color:'#10b981'}])}},axisLine:{roundCap:true,lineStyle:{width:18,color:[[1,t.bd]]}},axisTick:{show:false},splitLine:{show:false},axisLabel:{show:false},pointer:{show:false},
+  detail:{valueAnimation:true,formatter:v=>v.toFixed(1)+'٪',fontSize:34,fontWeight:900,fontFamily:FF,offsetCenter:[0,'6%'],color:t.tx},title:{offsetCenter:[0,'44%'],color:t.mut,fontSize:12,fontFamily:FF},data:[{value:+rate.toFixed(1),name:'کاملاً مطابق از کل شناسه‌ها'}]}]});
+ if(INS){const bl=['تا ۱۰۰ هزار','تا ۱ میلیون','تا ۱۰ میلیون','تا ۱۰۰ میلیون','بیش از ۱۰۰ میلیون'];
+  put('c_b',{tooltip:{trigger:'axis',...tip},grid:{left:6,right:6,top:24,bottom:4,containLabel:true},xAxis:{type:'category',data:bl,...ax,axisLabel:{color:t.mut,fontFamily:FF,fontSize:11,interval:0,width:70,overflow:'break'}},yAxis:{type:'value',...ax,...sl},
+   series:[{type:'bar',barMaxWidth:34,label:{show:true,position:'top',color:t.tx,fontFamily:FF},itemStyle:{borderRadius:[9,9,0,0]},data:INS.buckets.map((v,i)=>({value:v,itemStyle:{color:grad(['#34d399','#60a5fa','#a78bfa','#f59e0b','#ef4444'][i],['#10b981','#3b82f6','#8b5cf6','#d97706','#dc2626'][i])}}))}]});
+  const T=[...INS.top].reverse();
+  put('c_t',{tooltip:{trigger:'axis',axisPointer:{type:'shadow'},...tip,formatter:p=>{const x=T[p[0].dataIndex];return `${E(x.name)}<br>اختلاف: <b>${(x.d/U).toLocaleString('en',{maximumFractionDigits:2})} ${UN[U]}</b><br>${x.n} شناسه`}},grid:{left:6,right:30,top:6,bottom:4,containLabel:true},
+   xAxis:{type:'value',...ax,...sl,axisLabel:{color:t.mut,formatter:v=>short(v)}},yAxis:{type:'category',data:T.map(x=>x.name.length>22?x.name.slice(0,22)+'…':x.name),...ax,axisLabel:{color:t.tx,fontFamily:FF,fontSize:11}},
+   series:[{type:'bar',barMaxWidth:16,itemStyle:{borderRadius:8},data:T.map(x=>({value:x.d/U,itemStyle:{color:x.d<0?grad('#fb923c','#ef4444'):grad('#34d399','#10b981')}}))}]})}
+ $('#lg').innerHTML=Object.entries(d.reasons).map(([k,v])=>`<button data-r="${E(k)}" style="--c:${COL[k]}"><i></i>${k}${V(v,'c')}</button>`).join('');anim($('#lg'),900)}
+async function summary(){
+ const th=$('#th').value||0,[d,ins]=await Promise.all([J('/api/summary?th='+th),J('/api/insights?th='+th)]);S.sum=d;INS=ins;
+ $('#gen').textContent='آخرین محاسبه: '+d.meta.generated;
+ const V0={c_net:d.kpi.c.net,t_net:d.kpi.t.net,diff:d.kpi.c.net-d.kpi.t.net,visible:d.visible,hidden:d.total_raw-d.visible,exact:d.kpi.n_exact,canc:d.kpi.n_cancel};
+ KP.forEach(k=>{const e=$('#k_'+k[0]);e.dataset.v=V0[k[0]];e.style.color=k[0]==='diff'&&V0.diff?'var(--neg)':''});
+ $$('#kpi .ku').forEach((e,i)=>{if(KP[i][3]!=='c')e.textContent=UN[U]});
+ anim($('#kpi'),1100);charts()}
+const dot=(c)=>`<i style="width:8px;height:8px;border-radius:50%;background:${c};display:inline-block"></i>`;
+function filters(){const d=S.sum,o=S.t==='mis'?Object.entries(d.reasons):S.t==='iss'?d.issue_types.map(x=>[x]):S.t==='can'?d.cancel_types.map(x=>[x]):[];
+ $('#thl').style.display=S.t==='mis'?'':'none';
+ $('#fc').innerHTML=o.length?`<button class="fc ${S.f===''?'on':''}" data-f="">همه</button>`+(S.t==='mis'?`<button class="fc ${S.f==='UNMATCHED'?'on':''}" data-f="UNMATCHED" style="--c:#ef4444">⚠ رکورد متناظر پیدا نشد</button>`:'')+o.map(([k,v])=>`<button class="fc ${S.f===k?'on':''}" data-f="${E(k)}" style="--c:${COL[k]||'#5b5bf0'}">${E(k)}${v!=null?` <i>${v.toLocaleString('en')}</i>`:''}</button>`).join(''):''}
+async function load(){
+ $('#wrap').classList.add('ld');const d=await J('/api/table?'+qs()),cols=COLS[S.t];S.total=d.total;S.rows=d.rows;
+ $('#th_').innerHTML='<tr>'+cols.map(c=>`<th data-k="${c[0]}" title="${E(HELP[c[0]]||'')}">${c[1]}${S.sort===c[0]?(S.dir>0?' ↑':' ↓'):''}</th>`).join('')+'</tr>';
+ $('#tb').innerHTML=d.rows.map((r,i)=>`<tr data-i="${i}">`+cols.map(c=>cell(c,r)).join('')+'</tr>').join('');
+ $('#em').hidden=d.rows.length>0;$('#wrap').classList.remove('ld');
+ const pages=Math.max(1,Math.ceil(d.total/S.size));$('#pg').textContent=`صفحه ${S.page+1} از ${pages}`;
+ $('#info').innerHTML=`${V(d.total,'c')} رکورد · مبالغ جدول به ${UN[Math.min(U,10)]}`;
+ $('#pv').disabled=S.page<=0;$('#nx').disabled=S.page+1>=pages;anim($('#tb'),700);anim($('#info'),500)}
+/* ---------- پنل جزئیات ---------- */
+function drawer(r){const cols=COLS[S.t];$('#drt').textContent=r.key||r.f||'جزئیات';
+ $('#drb').innerHTML=cols.map(c=>{const v=r[c[0]];let h=E(v);
+  if(c[2]===2)h=String(v).split(' | ').filter(Boolean).map(x=>chip(x)).join('');
+  else if(c[2]===1||c[2]===3)h=`${(v/10).toLocaleString('en')} تومان<br><span style="color:var(--mut);font-weight:400">${(+v||0).toLocaleString('en')} ریال</span>`;
+  return `<div class="row2"><span>${c[1]}</span><b>${h||'—'}</b></div>`}).join('');
+ $('#dr').classList.add('on');$('#ov').classList.add('on')}
+const closeDr=()=>{$('#dr').classList.remove('on');$('#ov').classList.remove('on')};
+$('#tb').onclick=e=>{const tr=e.target.closest('tr');if(tr)drawer(S.rows[+tr.dataset.i])};$('#drx').onclick=$('#ov').onclick=closeDr;
+addEventListener('keydown',e=>{if(e.key==='Escape')closeDr();if(e.key==='/'&&document.activeElement.tagName!=='INPUT'){e.preventDefault();$('#q').focus()}});
+/* ---------- رویدادها ---------- */
+$('#tabs').innerHTML=Object.entries(NAMES).map(([k,v])=>`<button data-t="${k}">${v}</button>`).join('');
+const mark=()=>$$('#tabs button').forEach(b=>b.classList.toggle('on',b.dataset.t===S.t));
+const setF=f=>{S.f=f;S.page=0;filters();load()};
+$('#tabs').onclick=e=>{const t=e.target.dataset.t;if(t){S={...S,t,page:0,sort:'',dir:1,f:''};$('#q').value='';mark();filters();load()}};
+$('#fc').onclick=e=>{const b=e.target.closest('.fc');if(b)setF(b.dataset.f)};
+$('#lg').onclick=e=>{const b=e.target.closest('button');if(b){S.t='mis';S.sort='';mark();setF(b.dataset.r);$('#tabs').scrollIntoView({behavior:'smooth'})}};
+$('#th_').onclick=e=>{const k=e.target.closest('th')?.dataset.k;if(k){S.dir=S.sort===k?-S.dir:1;S.sort=k;S.page=0;load()}};
+let tm;$('#q').oninput=()=>{clearTimeout(tm);tm=setTimeout(()=>{S.page=0;load()},300)};
+const thChange=async()=>{S.page=0;await summary();filters();load()};
+$('#th').onchange=thChange;$('#thm1').onclick=()=>{$('#th').value=Math.max(0,+$('#th').value-1000);thChange()};$('#thp').onclick=()=>{$('#th').value=+$('#th').value+1000;thChange()};
+$('#ps').onchange=()=>{S.size=+$('#ps').value;S.page=0;load()};
+$('#pv').onclick=()=>{S.page--;load()};$('#nx').onclick=()=>{S.page++;load()};
+$('#csv').onclick=()=>{location.href='/api/csv?'+qs()};
+$('#seg').onclick=e=>{if(e.target.dataset.u){U=+e.target.dataset.u;$$('#seg button').forEach(b=>b.classList.toggle('on',b===e.target));summary();load()}};
+$('#thm').onclick=()=>{const n=document.documentElement.dataset.theme==='dark'?'light':'dark';document.documentElement.dataset.theme=n;try{localStorage.setItem('th',n)}catch(e){}charts()};
+addEventListener('resize',()=>Object.values(CH).forEach(c=>c.resize()));
+/* ---------- راهنما ---------- */
+function guide(){const d=S.sum,c=d.kpi.c,t=d.kpi.t,u=UN[U],th=$('#th').value||0;
+ const L=(n,x)=>`<div class="box live"><b>${n}:</b> ${V(x.sales,'c')} فاکتور فروش معتبر | فروش ${V(x.sale)} | برگشت ${V(x.ret)} | <b>خالص</b> ${V(x.net)} ${u} | فروش ابطال‌شده کنارگذاشته‌شده ${V(x.cancel_amt)} ${u}</div>`;
+ $('#gcb').innerHTML=`
+<h4>۱. هدف گزارش</h4><p>مقایسه فاکتورهای ثبت‌شده در <b>نرم‌افزار شرکت (ماژول)</b> با فاکتورهای <b>سامانه مودیان</b> و پیدا کردن مغایرت‌ها در مبلغ، برگشت، ابطال و ثبت‌نشدن فاکتور.</p>
+<h4>۲. مبلغ هر فاکتور</h4><p>مبلغ کل شامل مالیات است. در مودیان همان ستون مبلغ کل فایل خوانده می‌شود. در ماژول: <code>جمع ناخالص + مالیات</code> (و اگر تعیین شده باشد، منهای تخفیف). همه مبالغ فایل‌ها ریال فرض می‌شوند؛ دکمه‌های بالای صفحه فقط واحد نمایش را تغییر می‌دهند.</p>
+<h4>۳. انواع ردیف و نحوه تفکیک</h4><ul>
+<li><b>فروش:</b> فاکتور فروش عادی؛ کلید مقایسه شناسه مالیاتی آن است.</li>
+<li><b>برگشت از فروش:</b> با «شناسه صورتحساب مرجع» به فاکتور فروش اصلی وصل می‌شود.</li>
+<li><b>ابطال:</b> در مودیان با موضوع «ابطالی» مشخص می‌شود و به فاکتور اصلی مرجع می‌دهد.</li>
+<li><b>اصلاحی:</b> از برگشت واقعی جدا می‌شود و در «کنترل داده» می‌آید تا اشتباهاً از فروش کم نشود.</li></ul>
+<p>نرم‌افزار شرکت ابطال و اصلاحی را هم «برگشت از فروش» ثبت می‌کند. نوع واقعی هر ردیف ماژول از روی ردیف‌های مودیان با همان شناسه مرجع تشخیص داده می‌شود.</p>
+<h4>۴. فروش خالص چگونه حساب می‌شود</h4><div class="box"><code>فروش خالص = جمع فروش‌های معتبر − جمع برگشت‌های متصل</code></div>
+<ul><li>برای هر فاکتور اصلی، برگشت‌هایش (یک یا چند ردیف) جمع می‌شود و از فروش کم می‌شود؛ برگشت کامل خالص را صفر می‌کند.</li>
+<li>برگشتی که فاکتور اصلی‌اش در فایل نیست (مثلاً دوره قبل) هم در خالص لحاظ می‌شود و با طرف مقابل مقایسه می‌شود.</li>
+<li>فروش جدید با شناسه جدید، حتی اگر شناسه مرجع داشته باشد، یک فروش مستقل است و کسر نمی‌شود.</li></ul>
+${L('نرم‌افزار شرکت',c)}${L('سامانه مودیان',t)}
+<div class="box live"><b>اختلاف خالص:</b> ${V(c.net-t.net,'S')} ${u} (ماژول منهای مودیان؛ منفی یعنی مودیان بیشتر است)</div>
+<h4>۵. ابطال</h4><p>فاکتوری که در مودیان ابطال شده باشد <b>به‌طور کامل</b> از جمع‌ها و مقایسه کنار می‌رود: مبلغ فاکتور، مبلغ ردیف ابطال و برگشت‌های مربوط به آن در هیچ جمعی نمی‌آیند و مغایرت مبلغی هم برایشان ساخته نمی‌شود. فقط <b>اختلاف وضعیت</b> گزارش می‌شود، یعنی جایی که مودیان ابطال را دارد ولی ماژول هنوز فاکتور را فعال نگه داشته است. در این اجرا ${V(d.kpi.n_cancel,'c')} فاکتور ابطال کنار گذاشته شد.</p>
+<h4>۶. انواع مغایرت</h4><ul>
+<li><b>عدم ثبت فروش در سامانه مودیان:</b> فاکتور در ماژول هست ولی در مودیان نیست؛ احتمالاً ارسال نشده.</li>
+<li><b>عدم ثبت فروش در نرم‌افزار:</b> فاکتور در مودیان هست ولی در ماژول نیست.</li>
+<li><b>مغایرت مبلغ فروش:</b> شناسه در هر دو هست ولی مبلغ فرق دارد.</li>
+<li><b>مغایرت مبلغ برگشت:</b> برگشت‌ها در هر دو هست ولی جمع‌شان فرق دارد.</li>
+<li><b>برگشت فقط در نرم‌افزار / فقط در سامانه مودیان:</b> برگشت فقط در یک طرف ثبت شده است.</li></ul>
+<p>فیلتر <b>«رکورد متناظر پیدا نشد»</b> همه موارد «فقط در یکی از دو سیستم» را یک‌جا نشان می‌دهد و به آستانه مبلغ وابسته نیست.</p>
+<h4>۷. آستانه نمایش</h4><p>اختلاف‌های کمتر یا مساوی <b>${(+th).toLocaleString('en')} تومان</b> و اختلاف صفر در لیست مغایرت‌ها نمایش داده نمی‌شوند ولی شمرده می‌شوند: ${V(d.visible,'c')} مورد نمایش، ${V(d.total_raw-d.visible,'c')} مورد پنهان، ${V(d.kpi.n_exact,'c')} مورد کاملاً مطابق.</p>
+<h4>۸. تب «کنترل داده»</h4><p>مواردی که در محاسبه اثر دارند یا باید دستی بررسی شوند: فروش بدون شناسه، شناسه تکراری یا متعارض، ردیف‌های کاملاً تکراری، برگشت بدون شناسه مرجع، اصلاحی، نوع نامشخص، صورتحساب رد شده یا در انتظار واکنش، و ردیف‌های برگشت یکسان در ماژول.</p>
+<h4>۹. نکات مهم</h4><ul>
+<li>ابطال فقط از روی فایل مودیان تشخیص داده می‌شود.</li>
+<li>ردیف‌های برگشت کاملاً یکسان در ماژول (بدون شناسه) سطرهای یک سند فرض و همه جمع می‌شوند؛ در «کنترل داده» فهرست شده‌اند.</li>
+<li>اگر دو فایل بازه زمانی یکسان نداشته باشند، بخش بزرگی از اختلاف به‌خاطر همین است؛ نمودار ماهانه را ببینید.</li>
+<li>این گزارش ابزار کمکی است و جایگزین تأیید حسابدار یا کارشناس مالیاتی نیست.</li></ul>`;anim($('#gcb'),900)}
+$('#gdb').onclick=()=>{guide();$('#gd').showModal()};
+(async()=>{await summary();mark();filters();load()})();
+</script></body></html>

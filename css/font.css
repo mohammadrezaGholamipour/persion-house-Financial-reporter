@@ -1,0 +1,39 @@
+@font-face {
+  font-family: 'KalamehWeb';
+  src: url('../assets/font/eot/KalamehWeb(FaNum)-Black.eot');
+  src: url('../assets/font/eot/KalamehWeb(FaNum)-Black.eot?#iefix') format('embedded-opentype'),
+    url('../assets/font/woff2/KalamehWeb(FaNum)-Black.woff2') format('woff2'),
+    url('../assets/font/woff/KalamehWeb(FaNum)-Black.woff') format('woff');
+  font-weight: 900;
+  font-style: normal;
+}
+
+@font-face {
+  font-family: 'KalamehWeb';
+  src: url('../assets/font/eot/KalamehWeb(FaNum)-Bold.eot');
+  src: url('../assets/font/eot/KalamehWeb(FaNum)-Bold.eot?#iefix') format('embedded-opentype'),
+    url('../assets/font/woff2/KalamehWeb(FaNum)-Bold.woff2') format('woff2'),
+    url('../assets/font/woff/KalamehWeb(FaNum)-Bold.woff') format('woff');
+  font-weight: 700;
+  font-style: normal;
+}
+
+@font-face {
+  font-family: 'KalamehWeb';
+  src: url('../assets/font/eot/KalamehWeb(FaNum)-Regular.eot');
+  src: url('../assets/font/eot/KalamehWeb(FaNum)-Regular.eot?#iefix') format('embedded-opentype'),
+    url('../assets/font/woff2/KalamehWeb(FaNum)-Regular.woff2') format('woff2'),
+    url('../assets/font/woff/KalamehWeb(FaNum)-Regular.woff') format('woff');
+  font-weight: 400;
+  font-style: normal;
+}
+
+@font-face {
+  font-family: 'KalamehWeb';
+  src: url('../assets/font/eot/KalamehWeb(FaNum)-Thin.eot');
+  src: url('../assets/font/eot/KalamehWeb(FaNum)-Thin.eot?#iefix') format('embedded-opentype'),
+    url('../assets/font/woff2/KalamehWeb(FaNum)-Thin.woff2') format('woff2'),
+    url('../assets/font/woff/KalamehWeb(FaNum)-Thin.woff') format('woff');
+  font-weight: 100;
+  font-style: normal;
+}
