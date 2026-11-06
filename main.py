@@ -4,6 +4,7 @@
 اجرا:  py main.py ماژول.xlsx مودیان.xlsx      (ترتیب فایل‌ها مهم نیست)
 خروجی: پوشه output  ->  گزارش_مغایرت.html  و  result.json
 """
+
 import json
 import os
 import re
@@ -16,23 +17,40 @@ import openpyxl
 import pandas as pd
 
 # ---------------- تنظیمات ----------------
-THRESHOLD_TOMAN = 10_000            # اختلاف کمتر یا مساوی این مقدار (تومان) پنهان می‌شود
-RIAL = 10                           # هر تومان = ۱۰ ریال؛ مبالغ فایل‌ها ریال فرض می‌شوند
+THRESHOLD_TOMAN = 10_000  # اختلاف کمتر یا مساوی این مقدار (تومان) پنهان می‌شود
+RIAL = 10  # هر تومان = ۱۰ ریال؛ مبالغ فایل‌ها ریال فرض می‌شوند
 DIG = str.maketrans("۰۱۲۳۴۵۶۷۸۹٠١٢٣٤٥٦٧٨٩", "01234567890123456789")
 
-LABELS = {"key": "شناسه صورتحساب مالیاتی", "ref": "شناسه صورتحساب مرجع", "type": "نوع فاکتور",
-          "subject": "موضوع صورتحساب", "pattern": "الگوی صورتحساب", "gross": "جمع ناخالص", "discount": "جمع تخفیفات",
-          "tax": "مالیات", "total": "مبلغ کل", "status": "وضعیت صورتحساب", "date": "تاریخ",
-          "customer": "نام طرف حساب", "nid": "کد ملی / شناسه ملی", "eco": "کد اقتصادی",
-          "ptype": "نوع شخص", "sub": "کد اشتراک", "modno": "شماره ماژول مودیان"}
+LABELS = {
+    "key": "شناسه صورتحساب مالیاتی",
+    "ref": "شناسه صورتحساب مرجع",
+    "type": "نوع فاکتور",
+    "subject": "موضوع صورتحساب",
+    "pattern": "الگوی صورتحساب",
+    "gross": "جمع ناخالص",
+    "discount": "جمع تخفیفات",
+    "tax": "مالیات",
+    "total": "مبلغ کل",
+    "status": "وضعیت صورتحساب",
+    "date": "تاریخ",
+    "customer": "نام طرف حساب",
+    "nid": "کد ملی / شناسه ملی",
+    "eco": "کد اقتصادی",
+    "ptype": "نوع شخص",
+    "sub": "کد اشتراک",
+    "modno": "شماره ماژول مودیان",
+}
 ALIASES = {
     "key": ["شناسه صورتحساب مالیاتی", "شماره مالیاتی صورتحساب", "شناسه مالیاتی"],
     "ref": ["شناسه صورتحساب مرجع", "شماره مالیاتی صورتحساب مرجع"],
     "type": ["نوع فاکتور"],
     "subject": ["موضوع صورتحساب", "موضوع فاکتور"],
     "pattern": ["الگو صورتحساب", "الگوی صورتحساب"],
-    "gross": ["جمع ناخالص فاکتور", "جم ناخالص فاکتور",
-              "مجموع بهای کالا و خدمات صورت حساب بدون مالیات ها و عوارض (ریال)"],
+    "gross": [
+        "جمع ناخالص فاکتور",
+        "جم ناخالص فاکتور",
+        "مجموع بهای کالا و خدمات صورت حساب بدون مالیات ها و عوارض (ریال)",
+    ],
     "discount": ["جمع تخفیفات", "مبلغ تخفیف"],
     "tax": ["مبلغ مالیات", "مالیات بر ارزش افزوده (ریال)"],
     "total": ["مجموع صورتحساب (ریال)", "مبلغ کل صورتحساب", "مبلغ کل شامل مالیات"],
@@ -54,7 +72,14 @@ def fa(v):
         return ""
     if isinstance(v, float) and v.is_integer():
         v = int(v)
-    s = str(v).translate(DIG).replace("ي", "ی").replace("ك", "ک").replace("\u200c", " ").replace("\xa0", " ")
+    s = (
+        str(v)
+        .translate(DIG)
+        .replace("ي", "ی")
+        .replace("ك", "ک")
+        .replace("\u200c", " ")
+        .replace("\xa0", " ")
+    )
     return re.sub(r"\s+", " ", s).strip()
 
 
@@ -80,10 +105,26 @@ def month_of(d):
 
 def classify(*texts):
     s = " ".join(texts)
-    for kind, words in (("return", ("برگشت", "مرجوع", "عودت")), ("cancel", ("ابطال", "باطل", "لغو")),
-                        ("amend", ("اصلاح",)), ("sale", ("فروش", "اصلی"))):
+    for kind, words in (
+        ("return", ("برگشت", "مرجوع", "عودت")),
+        ("cancel", ("ابطال", "باطل", "لغو")),
+        ("amend", ("اصلاح",)),
+        ("sale", ("فروش", "اصلی")),
+    ):
         if any(w in s for w in words):
             return kind
+    return "unknown"
+
+
+def classify_module(value):
+    s = fa(value)
+
+    if any(w in s for w in ("برگشت", "مرجوع", "عودت")):
+        return "return"
+
+    if "فروش" in s:
+        return "sale"
+
     return "unknown"
 
 
@@ -97,14 +138,21 @@ def visual(text):
     اعداد و متن لاتین (مسیر، نام فایل) دست‌نخورده می‌مانند. جایگزین ساده python-bidi."""
     lead = len(text) - len(text.lstrip(" "))
     toks = re.split(r"(\s+)", text[lead:])
-    isl = lambda t: bool(t) and not t.isspace() and not AR.search(t) and re.search("[A-Za-z0-9]", t)
+    isl = (
+        lambda t: bool(t)
+        and not t.isspace()
+        and not AR.search(t)
+        and re.search("[A-Za-z0-9]", t)
+    )
     units, i = [], 0
-    while i < len(toks):  # کلمه‌های لاتین/عددی پشت‌سرهم یک واحد هستند و ترتیبشان حفظ می‌شود
+    while i < len(
+        toks
+    ):  # کلمه‌های لاتین/عددی پشت‌سرهم یک واحد هستند و ترتیبشان حفظ می‌شود
         if isl(toks[i]):
             j = i
             while j + 2 < len(toks) and toks[j + 1].isspace() and isl(toks[j + 2]):
                 j += 2
-            units.append("".join(toks[i:j + 1]))
+            units.append("".join(toks[i : j + 1]))
             i = j + 1
         else:
             units.append(toks[i])
@@ -113,7 +161,9 @@ def visual(text):
     for u in reversed(units):
         if AR.search(u):
             runs = re.split(f"({LTR})", u[::-1])
-            u = "".join(r[::-1] if re.fullmatch(LTR, r or "") else r for r in runs).translate(BRACKETS)
+            u = "".join(
+                r[::-1] if re.fullmatch(LTR, r or "") else r for r in runs
+            ).translate(BRACKETS)
         out.append(u)
     return " " * lead + "".join(out)
 
@@ -123,7 +173,9 @@ def setup_rtl():
     try:
         import arabic_reshaper
     except ImportError:
-        print("برای نمایش درست فارسی در ترمینال اجرا کنید:  py -m pip install arabic-reshaper")
+        print(
+            "برای نمایش درست فارسی در ترمینال اجرا کنید:  py -m pip install arabic-reshaper"
+        )
         return
 
     class RTLOut:
@@ -132,8 +184,16 @@ def setup_rtl():
 
         def write(self, text):
             parts = re.split(r"(\r|\n)", text)
-            return self.base.write("".join(
-                visual(arabic_reshaper.reshape(p.replace("\u200c", " "))) if AR.search(p) else p for p in parts))
+            return self.base.write(
+                "".join(
+                    (
+                        visual(arabic_reshaper.reshape(p.replace("\u200c", " ")))
+                        if AR.search(p)
+                        else p
+                    )
+                    for p in parts
+                )
+            )
 
         def flush(self):
             self.base.flush()
@@ -153,6 +213,7 @@ def ask(prompt=""):
 
 class Progress:
     """نوار پیشرفت ترمینال با درصد و زمان باقی‌مانده."""
+
     def __init__(self):
         self.reset()
 
@@ -170,8 +231,10 @@ class Progress:
         el = time.time() - self.t0
         eta = self.fmt(el * (1 - self.p) / self.p) if self.p > 0.03 else "..."
         n = int(28 * self.p)
-        sys.stdout.write(f"\r[{'=' * n}{'.' * (28 - n)}] {self.p * 100:5.1f}% | {self.label} | "
-                         f"سپری‌شده {self.fmt(el)} | باقی‌مانده {eta}      ")
+        sys.stdout.write(
+            f"\r[{'=' * n}{'.' * (28 - n)}] {self.p * 100:5.1f}% | {self.label} | "
+            f"سپری‌شده {self.fmt(el)} | باقی‌مانده {eta}      "
+        )
         sys.stdout.flush()
 
     def log(self, msg):
@@ -225,36 +288,80 @@ def load(path, p0=0.0, p1=0.0, label=""):
         df = pd.DataFrame(rows, columns=names, dtype=object)
     df = df.dropna(how="all")
     cols = {hdr(c): c for c in df.columns}
-    mp = {f: next((cols[hdr(a)] for a in al if hdr(a) in cols), None) for f, al in ALIASES.items()}
+    mp = {
+        f: next((cols[hdr(a)] for a in al if hdr(a) in cols), None)
+        for f, al in ALIASES.items()
+    }
     P.to(p1, f"خواندن {label}")
-    need = ["key", "ref", "subject"] if mp["subject"] else ["key", "ref", "customer", "nid", "ptype", "sub"]
-    miss = [LABELS[f] for f in need if not mp[f]] + ([] if mp["total"] or mp["gross"] else ["مبلغ"])
-    P.log(f"  ✔ {label}: {len(df):,} ردیف، {len(df.columns)} ستون | ستون‌های شناسایی‌شده: "
-          f"{sum(1 for v in mp.values() if v)}/{len(mp)}" + (f" | یافت نشد: {'، '.join(miss)}" if miss else ""))
+    need = (
+        ["key", "ref", "subject"]
+        if mp["subject"]
+        else ["key", "ref", "customer", "nid", "ptype", "sub"]
+    )
+    miss = [LABELS[f] for f in need if not mp[f]] + (
+        [] if mp["total"] or mp["gross"] else ["مبلغ"]
+    )
+    P.log(
+        f"  ✔ {label}: {len(df):,} ردیف، {len(df.columns)} ستون | ستون‌های شناسایی‌شده: "
+        f"{sum(1 for v in mp.values() if v)}/{len(mp)}"
+        + (f" | یافت نشد: {'، '.join(miss)}" if miss else "")
+    )
     return df, mp
 
 
 def prepare(df, mp, src, discount_before=False, prefix=""):
     g = lambda f: df[mp[f]] if mp[f] else pd.Series("", index=df.index)
-    o = pd.DataFrame({"row": [prefix + str(i + 2) for i in df.index], "key": g("key").map(key_of), "ref": g("ref").map(key_of)})
+    o = pd.DataFrame(
+        {
+            "row": [prefix + str(i + 2) for i in df.index],
+            "key": g("key").map(key_of),
+            "ref": g("ref").map(key_of),
+        }
+    )
     o["gross"], o["tax"] = g("gross").map(num), g("tax").map(num)
     if mp["total"]:
         o["total"] = g("total").map(num)
     else:  # مبلغ کل = ناخالص + مالیات؛ اگر ناخالص قبل از تخفیف باشد، تخفیف هم کم می‌شود
-        o["total"] = o.gross + o.tax - (g("discount").map(num) if discount_before else 0)
-    for f in ["type", "subject", "pattern", "status", "date", "customer", "nid", "eco", "ptype", "sub", "modno"]:
+        o["total"] = (
+            o.gross + o.tax - (g("discount").map(num) if discount_before else 0)
+        )
+    for f in [
+        "type",
+        "subject",
+        "pattern",
+        "status",
+        "date",
+        "customer",
+        "nid",
+        "eco",
+        "ptype",
+        "sub",
+        "modno",
+    ]:
         o[f] = g(f).map(fa)
     o["src"] = src
+    o["actual_status"] = ""
     return o
 
 
 # ---------------- پردازش هر طرف ----------------
 def clean_side(D, issues, tax_side):
     """حذف تکراری/بدون شناسه و برگرداندن فروش‌ها و برگشت‌های قابل استفاده."""
+
     def add(rows, issue, detail=""):
         for _, r in rows.iterrows():
-            issues.append(dict(src=r.src, row=str(r.row), key=r.key, ref=r.ref, type=r.type or r.subject,
-                               amount=int(r.total), issue=issue, detail=detail))
+            issues.append(
+                dict(
+                    src=r.src,
+                    row=str(r.row),
+                    key=r.key,
+                    ref=r.ref,
+                    type=r.type or r.subject,
+                    amount=int(r.total),
+                    issue=issue,
+                    detail=detail,
+                )
+            )
 
     S = D[D.k == "sale"]
     add(S[S.key == ""], "فروش بدون شناسه مالیاتی", "در محاسبه نیامد")
@@ -271,18 +378,40 @@ def clean_side(D, issues, tax_side):
         d = (R.key != "") & R.duplicated(["key", "total", "ref"])
         add(R[d], "ردیف برگشت کاملاً تکراری", "از محاسبه حذف شد")
         R = R[~d]
-    else:         # برگشت‌های ماژول شناسه ندارند؛ ردیف‌های یکسان جمع می‌شوند ولی گزارش می‌شوند
+    else:  # برگشت‌های ماژول شناسه ندارند؛ ردیف‌های یکسان جمع می‌شوند ولی گزارش می‌شوند
         cols = ["ref", "total", "tax", "date", "modno", "customer"]
         g = R.duplicated(cols, keep=False)
         for _, grp in R[g].groupby(cols):
             r = grp.iloc[0].copy()
             r["row"] = grp.row.iloc[0]
-            add(pd.DataFrame([r]), "ردیف‌های برگشت یکسان (همه جمع شدند)",
-                f"{len(grp)} ردیف: " + "، ".join(map(str, grp.row)) + " - اگر سطرهای یک سند نیستند بررسی شود")
+            add(
+                pd.DataFrame([r]),
+                "ردیف‌های برگشت یکسان (همه جمع شدند)",
+                f"{len(grp)} ردیف: "
+                + "، ".join(map(str, grp.row))
+                + " - اگر سطرهای یک سند نیستند بررسی شود",
+            )
     add(R[R.ref == ""], "برگشت بدون شناسه مرجع", "کسر نشد")
     R = R[R.ref != ""]
 
-    add(D[D.k == "unknown"], "نوع نامشخص", "در مبلغ نیامد")
+    unknown = D[D.k == "unknown"]
+
+    for _, r in unknown.iterrows():
+
+        detail = getattr(r, "actual_status", "") or "وضعیت قابل تشخیص نیست"
+
+        issues.append(
+            dict(
+                src=r.src,
+                row=str(r.row),
+                key=r.key,
+                ref=r.ref,
+                type=r.type or r.subject,
+                amount=int(r.total),
+                issue="نوع عملیات نامشخص",
+                detail=detail,
+            )
+        )
     add(D[D.k == "amend"], "اصلاحی", "در مبلغ نیامد؛ بررسی دستی")
     add(D[D.status.str.contains("رد شده")], "صورتحساب رد شده", "")
     add(D[D.status.str.contains("انتظار")], "در انتظار واکنش", "")
@@ -291,10 +420,14 @@ def clean_side(D, issues, tax_side):
 
 
 def ledger(S, R):
-    r = R.groupby("ref").agg(ret=("total", "sum"), rrows=("row", lambda x: "، ".join(map(str, x))))
+    r = R.groupby("ref").agg(
+        ret=("total", "sum"), rrows=("row", lambda x: "، ".join(map(str, x)))
+    )
     meta = pd.concat([R.groupby("ref")[META].first(), S.set_index("key")[META]])
     meta = meta[~meta.index.duplicated(keep="last")]
-    s = S.set_index("key")[["total", "row"]].rename(columns={"total": "sale", "row": "srow"})
+    s = S.set_index("key")[["total", "row"]].rename(
+        columns={"total": "sale", "row": "srow"}
+    )
     return s.join(r, how="outer").join(meta, how="outer"), s
 
 
@@ -307,15 +440,21 @@ def month_net(S, R):
 # ---------------- اجرای اصلی ----------------
 def ask_discount(parts):
     """اگر فایل ماژول ستون تخفیف با مقدار غیرصفر داشته باشد، از ادمین معنی ستون ناخالص پرسیده می‌شود."""
-    if not any((not mp["total"]) and mp["discount"] and df[mp["discount"]].map(num).any() for df, mp in parts):
+    if not any(
+        (not mp["total"]) and mp["discount"] and df[mp["discount"]].map(num).any()
+        for df, mp in parts
+    ):
         return False
-    print("\nدر فایل ماژول ردیف‌هایی با «جمع تخفیفات» غیرصفر پیدا شد. ستون «جمع ناخالص» چیست؟")
+    print(
+        "\nدر فایل ماژول ردیف‌هایی با «جمع تخفیفات» غیرصفر پیدا شد. ستون «جمع ناخالص» چیست؟"
+    )
     print("  1) بعد از کسر تخفیف (تخفیف قبلاً اعمال شده؛ مبلغ کل = ناخالص + مالیات)")
     print("  2) قبل از کسر تخفیف (مبلغ کل = ناخالص - تخفیف + مالیات)")
     while True:
         a = ask("شماره گزینه (1 یا 2): ").strip().translate(DIG)
         if a in ("1", "2"):
             return a == "2"
+
 
 def run_files(items, threshold_toman=THRESHOLD_TOMAN, discount_before=None):
     """items = [(مسیر فایل, 'module' یا 'tax'), ...]؛ از هر نوع می‌توان چند فایل داد (ادغام می‌شوند)."""
@@ -327,9 +466,13 @@ def run_files(items, threshold_toman=THRESHOLD_TOMAN, discount_before=None):
         cum += sz
         df, mp = load(path, p0, p1, f"{TYPE_FA[typ]} - {Path(path).name}")
         if typ == "tax" and not mp["subject"]:
-            raise SystemExit(f"خطا: فایل «{Path(path).name}» ستون «موضوع صورتحساب» ندارد؛ نوع آن مودیان نیست.")
+            raise SystemExit(
+                f"خطا: فایل «{Path(path).name}» ستون «موضوع صورتحساب» ندارد؛ نوع آن مودیان نیست."
+            )
         if not mp["key"] or not (mp["total"] or mp["gross"]):
-            raise SystemExit(f"خطا: ستون شناسه مالیاتی یا مبلغ در «{Path(path).name}» پیدا نشد.")
+            raise SystemExit(
+                f"خطا: ستون شناسه مالیاتی یا مبلغ در «{Path(path).name}» پیدا نشد."
+            )
         parts[typ].append((df, mp))
     if not parts["tax"] or not parts["module"]:
         raise SystemExit("خطا: حداقل یک فایل ماژول و یک فایل مودیان لازم است.")
@@ -341,27 +484,79 @@ def run_files(items, threshold_toman=THRESHOLD_TOMAN, discount_before=None):
 
     def build(kind, src, **kw):
         many = len(parts[kind]) > 1
-        return pd.concat([prepare(df, mp, src, prefix=(f"{n}:" if many else ""), **kw)
-                          for n, (df, mp) in enumerate(parts[kind], 1)], ignore_index=True)
+        return pd.concat(
+            [
+                prepare(df, mp, src, prefix=(f"{n}:" if many else ""), **kw)
+                for n, (df, mp) in enumerate(parts[kind], 1)
+            ],
+            ignore_index=True,
+        )
 
-    T, C = build("tax", "سامانه مودیان"), build("module", "نرم‌افزار شرکت", discount_before=discount_before)
+    T, C = build("tax", "سامانه مودیان"), build(
+        "module", "نرم‌افزار شرکت", discount_before=discount_before
+    )
     T["k"] = [classify(a, b) for a, b in zip(T.subject, T.pattern)]
-    C["k"] = C.type.map(classify)
+    C["k"] = C.type.map(classify_module)
     for nm, D in (("مودیان", T), ("ماژول", C)):
         c = D.k.value_counts()
-        P.log(f"  ● استخراج {nm}: فروش {c.get('sale', 0):,} | برگشت {c.get('return', 0):,} | "
-              f"ابطال {c.get('cancel', 0):,} | اصلاحی {c.get('amend', 0):,} | نامشخص {c.get('unknown', 0):,}")
+        P.log(
+            f"  ● استخراج {nm}: فروش {c.get('sale', 0):,} | برگشت {c.get('return', 0):,} | "
+            f"ابطال {c.get('cancel', 0):,} | اصلاحی {c.get('amend', 0):,} | نامشخص {c.get('unknown', 0):,}"
+        )
     P.to(0.47, "تشخیص ابطال و برگشت")
 
-    # ابطال: فاکتورهایی که در مودیان ردیف ابطال یا وضعیت ابطال دارند؛ از جمع و مغایرت خارج می‌شوند
+    # تشخیص وضعیت واقعی برگشتی‌های ماژول از روی اطلاعات مودیان
+
     canc = T[T.k == "cancel"]
-    cancelled = set(canc.ref[canc.ref != ""]) | set(T.key[(T.k == "sale") & T.status.str.contains("ابطال")])
-    # ماژول، ابطال و اصلاحی را «برگشت از فروش» ثبت می‌کند؛ نوع واقعی از روی مودیان مشخص می‌شود
-    tret = set(T.ref[T.k == "return"])
-    amend = set(T.ref[(T.k == "amend") & (T.ref != "")])
-    isret = C.k == "return"
-    C.loc[isret & C.ref.isin(cancelled), "k"] = "cancel"
-    C.loc[(C.k == "return") & C.ref.isin(amend - tret), "k"] = "amend"
+
+    cancelled = set(canc.ref[canc.ref != ""]) | set(
+        T.key[(T.k == "sale") & T.status.str.contains("ابطال", na=False)]
+    )
+
+    # استخراج وضعیت‌های واقعی مودیان بر اساس شناسه مرجع
+    tax_status_by_ref = {}
+
+    for _, r in T.iterrows():
+        if not r.ref:
+            continue
+
+        if r.k in ("return", "cancel", "amend"):
+            tax_status_by_ref.setdefault(r.ref, set()).add(r.k)
+
+    # نگهداری وضعیت واقعی هر برگشتی ماژول
+    C["actual_status"] = ""
+
+    for idx, r in C[C.k == "return"].iterrows():
+
+        ref = r.ref
+
+        if not ref:
+            C.at[idx, "k"] = "unknown"
+            C.at[idx, "actual_status"] = "نامشخص - بدون شناسه مرجع"
+            continue
+
+        statuses = tax_status_by_ref.get(ref, set())
+
+        if len(statuses) == 0:
+            C.at[idx, "k"] = "unknown"
+            C.at[idx, "actual_status"] = "نامشخص - در مودیان پیدا نشد"
+
+        elif len(statuses) > 1:
+            C.at[idx, "k"] = "unknown"
+            C.at[idx, "actual_status"] = "نامشخص - چند وضعیت برای یک شناسه مرجع"
+
+        else:
+            actual = next(iter(statuses))
+
+            C.at[idx, "k"] = actual
+
+            C.at[idx, "actual_status"] = {
+                "return": "برگشت از فروش",
+                "cancel": "ابطالی",
+                "amend": "اصلاحی",
+            }[
+                actual
+            ]  # ابطال: فاکتورهایی که در مودیان ردیف ابطال یا وضعیت ابطال دارند؛ از جمع و مغایرت خارج می‌شوند
 
     issues = []
     P.to(0.52, "تمیزسازی و حذف تکراری‌ها")
@@ -370,8 +565,12 @@ def run_files(items, threshold_toman=THRESHOLD_TOMAN, discount_before=None):
 
     P.to(0.60, "گزارش ابطال‌ها")
     # گزارش ابطال‌ها
-    cm_rows = C[C.k == "cancel"].groupby("ref").row.agg(lambda x: "، ".join(map(str, x)))
-    tc_rows = canc[canc.ref != ""].groupby("ref").row.agg(lambda x: "، ".join(map(str, x)))
+    cm_rows = (
+        C[C.k == "cancel"].groupby("ref").row.agg(lambda x: "، ".join(map(str, x)))
+    )
+    tc_rows = (
+        canc[canc.ref != ""].groupby("ref").row.agg(lambda x: "، ".join(map(str, x)))
+    )
     sale_c, sale_t = Sc.set_index("key").total, St.set_index("key").total
     cancels = []
     for k in sorted(cancelled):
@@ -382,9 +581,17 @@ def run_files(items, threshold_toman=THRESHOLD_TOMAN, discount_before=None):
             st = "اختلاف وضعیت: ابطال فقط در مودیان - در ماژول فعال است"
         else:
             st = "ابطال در مودیان - فاکتور اصلی در ماژول نیست"
-        cancels.append(dict(key=k, status=st, m_sale=int(sale_c.get(k, 0)), t_sale=int(sale_t.get(k, 0)),
-                            m_rows=cm_rows.get(k, ""), t_rows=tc_rows.get(k, ""),
-                            diff=int(st.startswith("اختلاف"))))
+        cancels.append(
+            dict(
+                key=k,
+                status=st,
+                m_sale=int(sale_c.get(k, 0)),
+                t_sale=int(sale_t.get(k, 0)),
+                m_rows=cm_rows.get(k, ""),
+                t_rows=tc_rows.get(k, ""),
+                diff=int(st.startswith("اختلاف")),
+            )
+        )
 
     cs, cr = Sc[~Sc.key.isin(cancelled)], Rc[~Rc.ref.isin(cancelled)]
     ts, tr = St[~St.key.isin(cancelled)], Rt[~Rt.ref.isin(cancelled)]
@@ -402,20 +609,29 @@ def run_files(items, threshold_toman=THRESHOLD_TOMAN, discount_before=None):
         X[p + "_net"] = X[p + "_sale"] - X[p + "_ret"]
         X[p + "_srow"] = L.srow.reindex(idx)
         X[p + "_rrows"] = L.rrows.reindex(idx).fillna("")
-    X["d_sale"], X["d_ret"], X["d_net"] = X.m_sale - X.t_sale, X.m_ret - X.t_ret, X.m_net - X.t_net
-    M = pd.DataFrame({
-        "عدم ثبت فروش در سامانه مودیان": X.m_has & ~X.t_has,
-        "عدم ثبت فروش در نرم‌افزار": X.t_has & ~X.m_has,
-        "مغایرت مبلغ فروش": X.m_has & X.t_has & (X.d_sale != 0),
-        "برگشت فقط در نرم‌افزار": (X.m_ret != 0) & (X.t_ret == 0),
-        "برگشت فقط در سامانه مودیان": (X.t_ret != 0) & (X.m_ret == 0),
-        "مغایرت مبلغ برگشت": (X.m_ret != 0) & (X.t_ret != 0) & (X.d_ret != 0)})
+    X["d_sale"], X["d_ret"], X["d_net"] = (
+        X.m_sale - X.t_sale,
+        X.m_ret - X.t_ret,
+        X.m_net - X.t_net,
+    )
+    M = pd.DataFrame(
+        {
+            "عدم ثبت فروش در سامانه مودیان": X.m_has & ~X.t_has,
+            "عدم ثبت فروش در نرم‌افزار": X.t_has & ~X.m_has,
+            "مغایرت مبلغ فروش": X.m_has & X.t_has & (X.d_sale != 0),
+            "برگشت فقط در نرم‌افزار": (X.m_ret != 0) & (X.t_ret == 0),
+            "برگشت فقط در سامانه مودیان": (X.t_ret != 0) & (X.m_ret == 0),
+            "مغایرت مبلغ برگشت": (X.m_ret != 0) & (X.t_ret != 0) & (X.d_ret != 0),
+        }
+    )
     bad = M.any(axis=1)
     X["max_abs"] = X[["d_sale", "d_ret", "d_net"]].abs().max(axis=1)
     mis = []
     meta = LC[META].reindex(idx)
     nb = int(bad.sum())
-    P.log(f"  ● شناسه‌های مقایسه‌شده: {len(idx):,} | کاملاً مطابق: {int((~bad).sum()):,} | دارای اختلاف خام: {nb:,}")
+    P.log(
+        f"  ● شناسه‌های مقایسه‌شده: {len(idx):,} | کاملاً مطابق: {int((~bad).sum()):,} | دارای اختلاف خام: {nb:,}"
+    )
     for i, (k, r) in enumerate(X[bad].iterrows()):
         if i % 2000 == 0:
             P.to(0.68 + 0.24 * i / max(nb, 1), "ساخت جدول مغایرت‌ها")
@@ -425,29 +641,67 @@ def run_files(items, threshold_toman=THRESHOLD_TOMAN, discount_before=None):
         if r.t_ret and not r.t_has:
             notes.append("فروش اصلی در مودیان نیست (احتمالاً دوره قبل)")
         mt = meta.loc[k]
-        mis.append(dict(
-            key=k, name=fa(mt.customer), nid=fa(mt.nid), eco=fa(mt.eco), ptype=fa(mt.ptype), sub=fa(mt["sub"]),
-            reasons=[c for c in M.columns if M.at[k, c]], max_abs=int(r.max_abs),
-            m_sale=int(r.m_sale), t_sale=int(r.t_sale), m_ret=int(r.m_ret), t_ret=int(r.t_ret),
-            m_net=int(r.m_net), t_net=int(r.t_net), d_net=int(r.d_net), notes="؛ ".join(notes),
-            m_rows=(f"فروش {r.m_srow}" if r.m_has else "") + (f" برگشت {r.m_rrows}" if r.m_rrows else ""),
-            t_rows=(f"فروش {r.t_srow}" if r.t_has else "") + (f" برگشت {r.t_rrows}" if r.t_rrows else "")))
+        mis.append(
+            dict(
+                key=k,
+                name=fa(mt.customer),
+                nid=fa(mt.nid),
+                eco=fa(mt.eco),
+                ptype=fa(mt.ptype),
+                sub=fa(mt["sub"]),
+                reasons=[c for c in M.columns if M.at[k, c]],
+                max_abs=int(r.max_abs),
+                m_sale=int(r.m_sale),
+                t_sale=int(r.t_sale),
+                m_ret=int(r.m_ret),
+                t_ret=int(r.t_ret),
+                m_net=int(r.m_net),
+                t_net=int(r.t_net),
+                d_net=int(r.d_net),
+                notes="؛ ".join(notes),
+                m_rows=(f"فروش {r.m_srow}" if r.m_has else "")
+                + (f" برگشت {r.m_rrows}" if r.m_rrows else ""),
+                t_rows=(f"فروش {r.t_srow}" if r.t_has else "")
+                + (f" برگشت {r.t_rrows}" if r.t_rrows else ""),
+            )
+        )
 
     P.to(0.92, "محاسبه خلاصه و نمودار")
     mm, mt_ = month_net(cs, cr), month_net(ts, tr)
-    monthly = [dict(m=m, c=int(mm.get(m, 0)), t=int(mt_.get(m, 0))) for m in sorted(set(mm.index) | set(mt_.index))]
+    monthly = [
+        dict(m=m, c=int(mm.get(m, 0)), t=int(mt_.get(m, 0)))
+        for m in sorted(set(mm.index) | set(mt_.index))
+    ]
 
     def kpi(D, S0, S, R):
-        return dict(rows=len(D), sales=len(S), sale=int(S.total.sum()), ret=int(R.total.sum()),
-                    net=int(S.total.sum() - R.total.sum()),
-                    cancel_amt=int(S0[S0.key.isin(cancelled)].total.sum()))
+        return dict(
+            rows=len(D),
+            sales=len(S),
+            sale=int(S.total.sum()),
+            ret=int(R.total.sum()),
+            net=int(S.total.sum() - R.total.sum()),
+            cancel_amt=int(S0[S0.key.isin(cancelled)].total.sum()),
+        )
 
     result = dict(
-        meta=dict(generated=datetime.now().strftime("%Y-%m-%d %H:%M"), threshold_toman=threshold_toman, rial=RIAL),
-        kpi=dict(c=kpi(C, Sc, cs, cr), t=kpi(T, St, ts, tr), n_keys=len(idx), n_exact=int((~bad).sum()),
-                 n_cancel=len(cancelled)),
-        monthly=monthly, mis=mis, can=cancels, iss=issues,
-        map=[dict(f=LABELS[f], c=cmp_[f] or "-", t=tmp[f] or "-") for f in ALIASES])
+        meta=dict(
+            generated=datetime.now().strftime("%Y-%m-%d %H:%M"),
+            threshold_toman=threshold_toman,
+            rial=RIAL,
+        ),
+        kpi=dict(
+            c=kpi(C, Sc, cs, cr),
+            t=kpi(T, St, ts, tr),
+            n_keys=len(idx),
+            n_exact=int((~bad).sum()),
+            n_cancel=len(cancelled),
+        ),
+        monthly=monthly,
+        mis=mis,
+        can=cancels,
+        iss=issues,
+        map=[dict(f=LABELS[f], c=cmp_[f] or "-", t=tmp[f] or "-") for f in ALIASES],
+    )
     return result
 
 
@@ -455,11 +709,13 @@ COLS = dict(
     mis="key name nid eco ptype sub reasons max_abs m_sale t_sale m_ret t_ret m_net t_net d_net notes m_rows t_rows",
     can="key status m_sale t_sale m_rows t_rows diff",
     iss="src row key ref type amount issue detail",
-    map="f c t")
+    map="f c t",
+)
 
 
 def write_db(result, db_path):
     import sqlite3
+
     db_path = Path(db_path)
     db_path.parent.mkdir(exist_ok=True)
     if db_path.exists():
@@ -467,21 +723,29 @@ def write_db(result, db_path):
     con = sqlite3.connect(db_path)
     for i, (name, cols) in enumerate(COLS.items()):
         P.to(0.93 + 0.07 * i / len(COLS), "ذخیره در دیتابیس")
-        df = pd.DataFrame(result[name if name != "map" else "map"], columns=cols.split())
+        df = pd.DataFrame(
+            result[name if name != "map" else "map"], columns=cols.split()
+        )
         if name == "mis":
             df["reasons"] = df.reasons.map(" | ".join)
         df.to_sql(name, con, index=False)
     con.execute("CREATE INDEX i_mis ON mis(max_abs)")
     con.execute("CREATE TABLE kv(k TEXT, v TEXT)")
     for k in ("meta", "kpi", "monthly"):
-        con.execute("INSERT INTO kv VALUES(?,?)", (k, json.dumps(result[k], ensure_ascii=False)))
+        con.execute(
+            "INSERT INTO kv VALUES(?,?)", (k, json.dumps(result[k], ensure_ascii=False))
+        )
     con.commit()
     con.close()
 
 
 def run(path_a, path_b, threshold_toman=THRESHOLD_TOMAN, discount_before=None):
     """سازگار با نسخه قبل: نوع هر فایل از روی ستون‌ها تشخیص داده می‌شود."""
-    return run_files([(path_a, detect_type(path_a)), (path_b, detect_type(path_b))], threshold_toman, discount_before)
+    return run_files(
+        [(path_a, detect_type(path_a)), (path_b, detect_type(path_b))],
+        threshold_toman,
+        discount_before,
+    )
 
 
 def show_items(items):
@@ -497,22 +761,37 @@ def menu():
     items, th = [], THRESHOLD_TOMAN
     while True:
         show_items(items)
-        print(f"\n  1) افزودن فایل   2) حذف فایل   3) شروع محاسبه   4) تغییر آستانه اختلاف (فعلی {th:,} تومان)   0) خروج")
+        print(
+            f"\n  1) افزودن فایل   2) حذف فایل   3) شروع محاسبه   4) تغییر آستانه اختلاف (فعلی {th:,} تومان)   0) خروج"
+        )
         c = ask("  انتخاب شما: ").strip().translate(DIG)
         if c == "1":
             p = ask("  مسیر کامل فایل (اکسل یا CSV): ").strip().strip('"')
             if not os.path.isfile(p):
                 print("  ✖ فایل پیدا نشد.")
                 continue
-            t = ask("  نوع فایل؟  1) ماژول (نرم‌افزار شرکت)   2) مودیان (سامانه مالیاتی): ").strip().translate(DIG)
+            t = (
+                ask(
+                    "  نوع فایل؟  1) ماژول (نرم‌افزار شرکت)   2) مودیان (سامانه مالیاتی): "
+                )
+                .strip()
+                .translate(DIG)
+            )
             if t not in ("1", "2"):
                 print("  ✖ نوع نامعتبر؛ فایل اضافه نشد.")
                 continue
             t = "module" if t == "1" else "tax"
             auto = detect_type(p)
             if auto != t:
-                print(f"  ⚠ عنوان ستون‌های این فایل شبیه «{TYPE_FA[auto]}» است، ولی شما «{TYPE_FA[t]}» انتخاب کردید.")
-                if ask("  1) پذیرفتن تشخیص خودکار   2) نگه‌داشتن انتخاب من: ").strip().translate(DIG) != "2":
+                print(
+                    f"  ⚠ عنوان ستون‌های این فایل شبیه «{TYPE_FA[auto]}» است، ولی شما «{TYPE_FA[t]}» انتخاب کردید."
+                )
+                if (
+                    ask("  1) پذیرفتن تشخیص خودکار   2) نگه‌داشتن انتخاب من: ")
+                    .strip()
+                    .translate(DIG)
+                    != "2"
+                ):
                     t = auto
             items.append((p, t))
         elif c == "2" and items:
@@ -550,14 +829,19 @@ def main():
     if not items:
         items, th = menu()
     flag = next((a for a in sys.argv if a.startswith("--discount=")), "")
-    res = run_files(items, th, {"--discount=before": True, "--discount=after": False}.get(flag))
+    res = run_files(
+        items, th, {"--discount=before": True, "--discount=after": False}.get(flag)
+    )
     db = Path(__file__).parent / "output" / "report.db"
     write_db(res, db)
     P.to(1.0, "پایان")
     k = res["kpi"]
-    print(f"\n\nمغایرت‌های خام: {len(res['mis']):,} | کاملاً مطابق: {k['n_exact']:,} | ابطال کنار گذاشته‌شده: {k['n_cancel']:,}")
+    print(
+        f"\n\nمغایرت‌های خام: {len(res['mis']):,} | کاملاً مطابق: {k['n_exact']:,} | ابطال کنار گذاشته‌شده: {k['n_cancel']:,}"
+    )
     if "--no-serve" not in sys.argv:
         from server import serve
+
         serve(db)
 
 
